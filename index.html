@@ -1,22 +1,22 @@
-<html><head><base href="https://galactic-linear-regression.space/" target="_blank">
+<html><head><base href="https://hogwarts-linear-regression.magic/" target="_blank">
 <style>
     body {
-        font-family: 'Orbitron', sans-serif;
+        font-family: 'Cinzel', serif;
         line-height: 1.6;
         margin: 0;
         display: flex;
-        background: #000 url('https://images.unsplash.com/photo-1506318137071-a8e063b4bec0?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80') no-repeat center center fixed;
+        background: #2a1f0d url('https://images.unsplash.com/photo-1583522862857-a19d06f02a7b?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80') no-repeat center center fixed;
         background-size: cover;
-        color: #0ff;
+        color: #d4af37;
     }
-    h1 { color: #0ff; text-shadow: 0 0 10px #00ffff; }
+    h1 { color: #d4af37; text-shadow: 2px 2px 4px #000; }
     #left-panel {
         width: 30%;
         padding: 20px;
-        background-color: rgba(0, 20, 40, 0.8);
+        background-color: rgba(42, 31, 13, 0.9);
         height: 100vh;
         overflow-y: auto;
-        border-right: 2px solid #0ff;
+        border-right: 2px solid #d4af37;
     }
     #right-panel {
         width: 70%;
@@ -25,15 +25,15 @@
     #plot {
         width: 100%;
         height: 70vh;
-        background-color: rgba(0, 20, 40, 0.6);
-        border: 2px solid #0ff;
+        background-color: rgba(42, 31, 13, 0.8);
+        border: 2px solid #d4af37;
         border-radius: 10px;
     }
     .slider {
         width: 100%;
         margin: 10px 0;
         -webkit-appearance: none;
-        background: #0ff;
+        background: #8e6516;
         outline: none;
         opacity: 0.7;
         transition: opacity .2s;
@@ -44,49 +44,49 @@
         appearance: none;
         width: 25px;
         height: 25px;
-        background: #003;
+        background: #d4af37;
         cursor: pointer;
-        border: 2px solid #0ff;
+        border: 2px solid #8e6516;
         border-radius: 50%;
     }
     #results {
-        background-color: rgba(0, 40, 80, 0.6);
+        background-color: rgba(67, 49, 21, 0.8);
         padding: 15px;
         border-radius: 5px;
         margin-top: 20px;
-        border: 1px solid #0ff;
+        border: 1px solid #d4af37;
     }
     label { display: block; margin-top: 10px; }
 </style>
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
 <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/9.4.4/math.js"></script>
 </head>
 <body>
 <div id="left-panel">
-    <h1>Galactic Regression Controls</h1>
+    <h1>Magical Regression Controls</h1>
 
     <div id="controls">
-        <label for="slope">Quantum Flux (a): <span id="slope-value">1</span></label>
+        <label for="slope">Wand Power (a): <span id="slope-value">1</span></label>
         <input type="range" id="slope" class="slider" min="-50" max="50" step="0.1" value="1">
         
-        <label for="points">Stardust Particles (n): <span id="points-value">500</span></label>
+        <label for="points">Magical Particles (n): <span id="points-value">500</span></label>
         <input type="range" id="points" class="slider" min="100" max="1000" step="10" value="500">
         
-        <label for="noise">Cosmic Interference (c): <span id="noise-value">50</span></label>
+        <label for="noise">Magical Interference (c): <span id="noise-value">50</span></label>
         <input type="range" id="noise" class="slider" min="10" max="100" step="1" value="50">
     </div>
 
     <div id="results">
-        <h3>Hyperspace Calculations:</h3>
-        <p>Estimated quantum flux: <span id="est-slope"></span></p>
-        <p>Interstellar constant: <span id="est-intercept"></span></p>
-        <p>Cosmic alignment: <span id="r-squared"></span></p>
+        <h3>Divination Results:</h3>
+        <p>Estimated Wand Power: <span id="est-slope"></span></p>
+        <p>Magical Constant: <span id="est-intercept"></span></p>
+        <p>Spell Accuracy: <span id="r-squared"></span></p>
     </div>
 </div>
 
 <div id="right-panel">
-    <h1>Galactic Regression Matrix</h1>
+    <h1>Magical Regression Parchment</h1>
     <div id="plot"></div>
 </div>
 
@@ -136,8 +136,8 @@ function updatePlot() {
         y: y,
         mode: 'markers',
         type: 'scatter',
-        name: 'Stardust Particles',
-        marker: {color: '#0ff', size: 8}
+        name: 'Magical Particles',
+        marker: {color: '#d4af37', size: 8, symbol: 'star'}
     };
     
     const trace2 = {
@@ -145,17 +145,17 @@ function updatePlot() {
         y: [estSlope * Math.min(...x) + estIntercept, estSlope * Math.max(...x) + estIntercept],
         mode: 'lines',
         type: 'scatter',
-        name: 'Quantum Trajectory',
-        line: {color: '#f0f', width: 3}
+        name: 'Spell Trajectory',
+        line: {color: '#8e6516', width: 3}
     };
     
     const layout = {
-        title: 'Galactic Regression Matrix',
-        paper_bgcolor: 'rgba(0,0,0,0)',
-        plot_bgcolor: 'rgba(0,0,0,0)',
-        font: {color: '#0ff'},
-        xaxis: {title: 'Spatial Coordinates', gridcolor: '#0ff', gridwidth: 0.1},
-        yaxis: {title: 'Temporal Flux', gridcolor: '#0ff', gridwidth: 0.1},
+        title: 'Magical Regression Parchment',
+        paper_bgcolor: 'rgba(42, 31, 13, 0.6)',
+        plot_bgcolor: 'rgba(42, 31, 13, 0.6)',
+        font: {color: '#d4af37', family: 'Cinzel'},
+        xaxis: {title: 'Magical Essence', gridcolor: '#8e6516', gridwidth: 0.1},
+        yaxis: {title: 'Spell Power', gridcolor: '#8e6516', gridwidth: 0.1},
         showlegend: false
     };
     
