@@ -1,0 +1,176 @@
+<html><head><base href="https://galactic-linear-regression.space/" target="_blank">
+<style>
+    body {
+        font-family: 'Orbitron', sans-serif;
+        line-height: 1.6;
+        margin: 0;
+        display: flex;
+        background: #000 url('https://images.unsplash.com/photo-1506318137071-a8e063b4bec0?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80') no-repeat center center fixed;
+        background-size: cover;
+        color: #0ff;
+    }
+    h1 { color: #0ff; text-shadow: 0 0 10px #00ffff; }
+    #left-panel {
+        width: 30%;
+        padding: 20px;
+        background-color: rgba(0, 20, 40, 0.8);
+        height: 100vh;
+        overflow-y: auto;
+        border-right: 2px solid #0ff;
+    }
+    #right-panel {
+        width: 70%;
+        padding: 20px;
+    }
+    #plot {
+        width: 100%;
+        height: 70vh;
+        background-color: rgba(0, 20, 40, 0.6);
+        border: 2px solid #0ff;
+        border-radius: 10px;
+    }
+    .slider {
+        width: 100%;
+        margin: 10px 0;
+        -webkit-appearance: none;
+        background: #0ff;
+        outline: none;
+        opacity: 0.7;
+        transition: opacity .2s;
+    }
+    .slider:hover { opacity: 1; }
+    .slider::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 25px;
+        height: 25px;
+        background: #003;
+        cursor: pointer;
+        border: 2px solid #0ff;
+        border-radius: 50%;
+    }
+    #results {
+        background-color: rgba(0, 40, 80, 0.6);
+        padding: 15px;
+        border-radius: 5px;
+        margin-top: 20px;
+        border: 1px solid #0ff;
+    }
+    label { display: block; margin-top: 10px; }
+</style>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/9.4.4/math.js"></script>
+</head>
+<body>
+<div id="left-panel">
+    <h1>Galactic Regression Controls</h1>
+
+    <div id="controls">
+        <label for="slope">Quantum Flux (a): <span id="slope-value">1</span></label>
+        <input type="range" id="slope" class="slider" min="-50" max="50" step="0.1" value="1">
+        
+        <label for="points">Stardust Particles (n): <span id="points-value">500</span></label>
+        <input type="range" id="points" class="slider" min="100" max="1000" step="10" value="500">
+        
+        <label for="noise">Cosmic Interference (c): <span id="noise-value">50</span></label>
+        <input type="range" id="noise" class="slider" min="10" max="100" step="1" value="50">
+    </div>
+
+    <div id="results">
+        <h3>Hyperspace Calculations:</h3>
+        <p>Estimated quantum flux: <span id="est-slope"></span></p>
+        <p>Interstellar constant: <span id="est-intercept"></span></p>
+        <p>Cosmic alignment: <span id="r-squared"></span></p>
+    </div>
+</div>
+
+<div id="right-panel">
+    <h1>Galactic Regression Matrix</h1>
+    <div id="plot"></div>
+</div>
+
+<script>
+function generateData(slope, numPoints, noiseFactor) {
+    let x = Array.from({length: numPoints}, () => Math.random() * 9 + 1);
+    let y = x.map(xi => slope * xi + math.random(-noiseFactor, noiseFactor));
+    return [x, y];
+}
+
+function linearRegression(x, y) {
+    const n = x.length;
+    let sum_x = 0, sum_y = 0, sum_xy = 0, sum_xx = 0;
+    for (let i = 0; i < n; i++) {
+        sum_x += x[i];
+        sum_y += y[i];
+        sum_xy += x[i] * y[i];
+        sum_xx += x[i] * x[i];
+    }
+    const slope = (n * sum_xy - sum_x * sum_y) / (n * sum_xx - sum_x * sum_x);
+    const intercept = (sum_y - slope * sum_x) / n;
+    return [slope, intercept];
+}
+
+function calculateRSquared(x, y, slope, intercept) {
+    const yMean = y.reduce((a, b) => a + b) / y.length;
+    const ssRes = y.reduce((sum, yi, i) => sum + Math.pow(yi - (slope * x[i] + intercept), 2), 0);
+    const ssTot = y.reduce((sum, yi) => sum + Math.pow(yi - yMean, 2), 0);
+    return 1 - (ssRes / ssTot);
+}
+
+function updatePlot() {
+    const slope = parseFloat(document.getElementById('slope').value);
+    const numPoints = parseInt(document.getElementById('points').value);
+    const noiseFactor = parseFloat(document.getElementById('noise').value);
+    
+    document.getElementById('slope-value').textContent = slope.toFixed(1);
+    document.getElementById('points-value').textContent = numPoints;
+    document.getElementById('noise-value').textContent = noiseFactor;
+    
+    const [x, y] = generateData(slope, numPoints, noiseFactor);
+    const [estSlope, estIntercept] = linearRegression(x, y);
+    const rSquared = calculateRSquared(x, y, estSlope, estIntercept);
+    
+    const trace1 = {
+        x: x,
+        y: y,
+        mode: 'markers',
+        type: 'scatter',
+        name: 'Stardust Particles',
+        marker: {color: '#0ff', size: 8}
+    };
+    
+    const trace2 = {
+        x: [Math.min(...x), Math.max(...x)],
+        y: [estSlope * Math.min(...x) + estIntercept, estSlope * Math.max(...x) + estIntercept],
+        mode: 'lines',
+        type: 'scatter',
+        name: 'Quantum Trajectory',
+        line: {color: '#f0f', width: 3}
+    };
+    
+    const layout = {
+        title: 'Galactic Regression Matrix',
+        paper_bgcolor: 'rgba(0,0,0,0)',
+        plot_bgcolor: 'rgba(0,0,0,0)',
+        font: {color: '#0ff'},
+        xaxis: {title: 'Spatial Coordinates', gridcolor: '#0ff', gridwidth: 0.1},
+        yaxis: {title: 'Temporal Flux', gridcolor: '#0ff', gridwidth: 0.1},
+        showlegend: false
+    };
+    
+    Plotly.newPlot('plot', [trace1, trace2], layout);
+    
+    document.getElementById('est-slope').textContent = estSlope.toFixed(4);
+    document.getElementById('est-intercept').textContent = estIntercept.toFixed(4);
+    document.getElementById('r-squared').textContent = rSquared.toFixed(4);
+}
+
+document.getElementById('slope').addEventListener('input', updatePlot);
+document.getElementById('points').addEventListener('input', updatePlot);
+document.getElementById('noise').addEventListener('input', updatePlot);
+
+updatePlot();
+</script>
+
+</body></html>
